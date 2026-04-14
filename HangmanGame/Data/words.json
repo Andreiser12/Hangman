@@ -1,0 +1,51 @@
+﻿{
+  "Cars": [
+    "Ferrari",
+    "Mercedes",
+    "Porsche",
+    "Bugatti",
+    "McLaren",
+    "Maserati",
+    "Pagani"
+  ],
+
+  "Countries": [
+    "Ghana",
+    "Paraguay",
+    "France",
+    "Panama",
+    "Nicaragua",
+    "Ireland",
+    "Japan"
+  ],
+
+  FootballTeams: [
+    "Real Madrid",
+    "Arsenal",
+    "Sporting CP",
+    "Bayern Munich",
+    "Juventus",
+    "Dacia Unirea Braila",
+    "Liverpool"
+  ],
+
+  FootballPlayers: [
+    "Cristiano Ronaldo",
+    "Lionel Messi",
+    "Oleg Reabciuk",
+    "Romelu Lukaku",
+    "Douglas Costa",
+    "Santiago Gimenez",
+    "Denzel Dumfries"
+  ],
+
+  Cities: [
+    "Brasov",
+    "Braila",
+    "Paris",
+    "London",
+    "Alkmaar",
+    "Dubai",
+    "Rome"
+  ]
+}
