@@ -18,7 +18,15 @@
                 <Separator/>
                 <MenuItem Header="Cancel" Click="Cancel_Click"/>
             </MenuItem>
-            <MenuItem Header="Categories" ItemsSource="{Binding Categories}"/>
+            <MenuItem Header="Categories" ItemsSource="{Binding Categories}">
+                <MenuItem.ItemContainerStyle>
+                    <Style TargetType="MenuItem">
+                        <Setter Property="IsCheckable" Value="True"/>
+                        <Setter Property="Tag" Value="{Binding}"/>
+                        <EventSetter Event="Click" Handler="Category_Click"/>
+                    </Style>
+                </MenuItem.ItemContainerStyle>
+            </MenuItem>
             <MenuItem Header="Help">
                 <MenuItem Header="About" Click="About_Click"/>
             </MenuItem>
@@ -32,7 +40,6 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <!-- Rând 0: info jucător + timer -->
             <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
                 <Image Source="{Binding UserImagePath, Converter={StaticResource ImageConverter}}" 
                        Height="50" Width="50" Margin="0,0,10,0"/>
@@ -44,13 +51,11 @@
                            FontSize="16" VerticalAlignment="Center" Margin="30,0,0,0"/>
             </StackPanel>
 
-            <!-- Rând 1: imagine spânzurătoare (placeholder) -->
             <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="1" Margin="0,0,0,10">
                 <TextBlock Text="Hangman Image Area" HorizontalAlignment="Center" 
                            VerticalAlignment="Center" Foreground="Gray"/>
             </Border>
 
-            <!-- Rând 2: butoane litere A-Z -->
             <ItemsControl Grid.Row="2" ItemsSource="{Binding Letters}" Margin="0,0,0,10">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -69,7 +74,6 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
 
-            <!-- Rând 3: cuvântul de ghicit -->
             <TextBlock Grid.Row="3" Text="{Binding DisplayWord}" 
                        FontSize="28" FontWeight="Bold" 
                        HorizontalAlignment="Center" Margin="0,0,0,10"/>

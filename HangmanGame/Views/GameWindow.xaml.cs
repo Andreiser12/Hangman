@@ -40,5 +40,27 @@ namespace HangmanGame.Views
             MessageBox.Show("Nume: Șerbănescu Andrei\nGrupa: 10LF244\nSpecializarea: Informatică",
                             "About", MessageBoxButton.OK, MessageBoxImage.Information);
         }
+
+        private void Category_Click(object sender, RoutedEventArgs e)
+        {
+            var clicked = sender as MenuItem;
+            if (clicked == null) return;
+
+            var vm = DataContext as ViewModels.GameViewModel;
+            if (vm == null) return;
+
+            var parent = clicked.Parent as MenuItem;
+            if (parent != null)
+            {
+                foreach (var item in parent.Items)
+                {
+                    if (item is MenuItem menuItem && menuItem != clicked)
+                        menuItem.IsChecked = false;
+                }
+            }
+
+            clicked.IsChecked = true;
+            vm.SelectedCategory = clicked.Tag.ToString();
+        }
     }
 }

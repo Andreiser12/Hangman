@@ -39,6 +39,10 @@ namespace HangmanGame.ViewModels
                 {
                     _selectedCategory = value;
                     OnPropertyChanged(nameof(SelectedCategory));
+
+                    _currentGame.CurrentLevel = 0;
+                    CurrentLevel = 0;
+                    NewGame();
                 }
             }
         }
