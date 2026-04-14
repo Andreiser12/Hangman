@@ -19,7 +19,7 @@
     "Japan"
   ],
 
-  FootballTeams: [
+  "FootballTeams": [
     "Real Madrid",
     "Arsenal",
     "Sporting CP",
@@ -29,7 +29,7 @@
     "Liverpool"
   ],
 
-  FootballPlayers: [
+  "FootballPlayers": [
     "Cristiano Ronaldo",
     "Lionel Messi",
     "Oleg Reabciuk",
@@ -39,7 +39,7 @@
     "Denzel Dumfries"
   ],
 
-  Cities: [
+  "Cities": [
     "Brasov",
     "Braila",
     "Paris",

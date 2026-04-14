@@ -98,10 +98,11 @@ namespace HangmanGame.ViewModels
 
             var gameWindow = new Views.GameWindow();
             gameWindow.DataContext = new GameViewModel(SelectedUser);
-            gameWindow.Show();
 
-            Application.Current.MainWindow?.Close();
+            var previousWindow = Application.Current.MainWindow;
             Application.Current.MainWindow = gameWindow;
+            gameWindow.Show();
+            previousWindow?.Close();
         }
     }
 }
