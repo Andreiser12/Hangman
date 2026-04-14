@@ -49,9 +49,23 @@ namespace HangmanGame.ViewModels
 
             if (dialog.ShowDialog() == true)
             {
-                ImagePath = dialog.FileName;
-            }
+                string sourceFile = dialog.FileName;
+                string fileName = System.IO.Path.GetFileName(sourceFile);
+                string imagesDir = System.IO.Path.Combine(
+                    AppDomain.CurrentDomain.BaseDirectory,
+                    "Data", "Images");
 
+                if(!System.IO.Directory.Exists(imagesDir))
+                {
+                    System.IO.Directory.CreateDirectory(imagesDir);
+                }
+
+                string destFile = System.IO.Path.Combine(
+                    imagesDir, fileName);
+                System.IO.File.Copy(sourceFile, destFile, overwrite: true);
+
+                ImagePath = System.IO.Path.Combine("Data", "Images", fileName);
+            }
         }
     }
 }

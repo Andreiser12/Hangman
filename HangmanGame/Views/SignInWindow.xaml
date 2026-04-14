@@ -4,13 +4,17 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:HangmanGame.ViewModels"
-        xmlns:local="clr-namespace:HangmanGame.Views"
+        xmlns:conv="clr-namespace:HangmanGame.Converters"
         mc:Ignorable="d"
         Title="Sign In" Height="500" Width="400">
     
     <Window.DataContext>
         <vm:SignInViewModel/>
     </Window.DataContext>
+
+    <Window.Resources>
+        <conv:RelativePathToImageConverter x:Key="ImageConverter"/>
+    </Window.Resources>
 
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -51,7 +55,7 @@
                     VerticalAlignment="Center"/>
 
             <Image Grid.Column="1"
-                    Source="{Binding SelectedUser.ImagePath}"
+                    Source="{Binding SelectedUser.ImagePath, Converter={StaticResource ImageConverter}}"
                     Height="120"
                    Stretch="Uniform"/>
 

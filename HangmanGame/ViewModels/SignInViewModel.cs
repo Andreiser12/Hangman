@@ -2,6 +2,7 @@
 using HangmanGame.Data;
 using HangmanGame.Models;
 using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Input;
 
 namespace HangmanGame.ViewModels
@@ -57,7 +58,7 @@ namespace HangmanGame.ViewModels
 
         private void Cancel()
         {
-            
+            Application.Current.Shutdown();
         }
 
         private void NewUser()
@@ -83,7 +84,12 @@ namespace HangmanGame.ViewModels
 
         private void DeleteUser()
         {
-            
+            if (SelectedUser != null)
+            {
+                Users.Remove(SelectedUser);
+                SelectedUser = null;
+                _userRepository.SaveUsers(Users.ToList());
+            }
         }
 
         private void Play()
