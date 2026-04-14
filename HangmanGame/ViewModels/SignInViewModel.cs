@@ -94,7 +94,14 @@ namespace HangmanGame.ViewModels
 
         private void Play()
         {
-            
+            if (SelectedUser == null) return;
+
+            var gameWindow = new Views.GameWindow();
+            gameWindow.DataContext = new GameViewModel(SelectedUser);
+            gameWindow.Show();
+
+            Application.Current.MainWindow?.Close();
+            Application.Current.MainWindow = gameWindow;
         }
     }
 }
