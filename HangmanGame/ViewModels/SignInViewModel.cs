@@ -1,4 +1,5 @@
 ﻿using HangmanGame.Commands;
+using HangmanGame.Data;
 using HangmanGame.Models;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
@@ -23,6 +24,8 @@ namespace HangmanGame.ViewModels
             }
         }
 
+        private readonly UserRepository _userRepository;
+
         public ICommand PlayCommand { get; }
         public ICommand NewUserCommand { get; }
         public ICommand DeleteUserCommand { get; }
@@ -30,7 +33,8 @@ namespace HangmanGame.ViewModels
 
         public SignInViewModel()
         {
-            Users = new ObservableCollection<User>();
+            _userRepository = new UserRepository();
+            Users = new ObservableCollection<User>(_userRepository.LoadUsers());
 
             PlayCommand = new RelayCommand(
                 execute: _ => Play(),
@@ -58,7 +62,23 @@ namespace HangmanGame.ViewModels
 
         private void NewUser()
         {
-            
+            var dialog = new Views.NewUserWindow();
+
+            if (dialog.ShowDialog()==true)
+            {
+                var vm = dialog.DataContext as NewUserViewModel;
+
+                if(!string.IsNullOrWhiteSpace(vm.Username))
+                {
+                    var newUser = new User
+                    {
+                        Username = vm.Username,
+                        ImagePath = vm.ImagePath
+                    };
+                    Users.Add(newUser);
+                    _userRepository.SaveUsers(Users.ToList());
+                }
+            }
         }
 
         private void DeleteUser()
