@@ -10,11 +10,14 @@ namespace HangmanGame.ViewModels
 {
     public class GameViewModel : ViewModelBase
     {
+        private readonly int MAX_MISTAKES = 9;
+
         private readonly WordRepository _wordRepository;
         private Game _currentGame;
         private User _currentUser;
         private List<string> _usedWords = new List<string>();
         private readonly SavedGameRepository _savedGameRepository;
+        private readonly StatisticsRepository _statisticsRepository;
 
         public string Username => _currentUser.Username;
         public string UserImagePath => _currentUser.ImagePath;
@@ -113,6 +116,7 @@ namespace HangmanGame.ViewModels
         public ICommand GuessLetterCommand { get; }
         public ICommand SaveGameCommand { get; }
         public ICommand OpenGameCommand { get; }
+        public ICommand StatisticsCommand { get; }
 
         private DispatcherTimer _timer;
 
@@ -124,6 +128,7 @@ namespace HangmanGame.ViewModels
             _displayWord = string.Empty;
             _selectedCategory = "All categories";
             _savedGameRepository = new SavedGameRepository();
+            _statisticsRepository = new StatisticsRepository();
 
             var categoryList = _wordRepository.GetCategories();
             categoryList.Insert(0, "All categories");
@@ -142,7 +147,22 @@ namespace HangmanGame.ViewModels
                 execute: _ => OpenGame()
             );
 
+            StatisticsCommand = new RelayCommand(
+                execute: _ => ShowStatistics()
+            );
+
             NewGame();
+        }
+
+        private void ShowStatistics()
+        {
+            _timer?.Stop();
+
+            var window = new Views.StatisticsWindow();
+            window.DataContext = new StatisticsViewModel();
+            window.ShowDialog();
+
+            StartTimer();
         }
 
         private void OpenGame()
@@ -166,14 +186,12 @@ namespace HangmanGame.ViewModels
 
                 _usedWords = new List<string>(saved.UsedWords);
 
-                // Actualizează proprietățile legate de UI
                 _selectedCategory = saved.Category;
                 OnPropertyChanged(nameof(SelectedCategory));
 
                 CurrentLevel = saved.CurrentLevel;
                 RemainingSeconds = saved.RemainingSeconds;
 
-                // Reconstruiește butoanele de litere cu stările corecte
                 InitializeLetters();
                 foreach (char letter in saved.GuessedLetters.Concat(saved.WrongLetters))
                 {
@@ -382,6 +400,9 @@ namespace HangmanGame.ViewModels
         {
             _timer?.Stop();
 
+            bool hasWon = result == GameResult.Won;
+            _statisticsRepository.RecordGame(_currentUser.Username, _currentGame.Category, hasWon);
+
             string word = _currentGame.WordToGuess;
             var vm = new GameOverViewModel(result, word);
             var window = new Views.GameOverWindow();
@@ -397,10 +418,10 @@ namespace HangmanGame.ViewModels
             else
             {
                 var signInWindow = new Views.SignInWindow();
-                System.Windows.Application.Current.MainWindow = signInWindow;
+                Application.Current.MainWindow = signInWindow;
                 signInWindow.Show();
 
-                foreach (System.Windows.Window w in System.Windows.Application.Current.Windows)
+                foreach (Window w in Application.Current.Windows)
                 {
                     if (w is Views.GameWindow)
                     {

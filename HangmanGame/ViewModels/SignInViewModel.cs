@@ -104,6 +104,19 @@ namespace HangmanGame.ViewModels
 
                 if (!string.IsNullOrWhiteSpace(vm.Username))
                 {
+                    bool usernameExists = Users.Any(
+                        u => u.Username.Equals(vm.Username, StringComparison.OrdinalIgnoreCase));
+
+                    if (usernameExists)
+                    {
+                        MessageBox.Show(
+                            $"A user with the name '{vm.Username}' already exists. Please choose a different name.",
+                            "Duplicate Username",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Warning);
+                        return;
+                    }
+
                     var newUser = new User
                     {
                         Username = vm.Username,
@@ -117,12 +130,40 @@ namespace HangmanGame.ViewModels
 
         private void DeleteUser()
         {
-            if (SelectedUser != null)
+            if (SelectedUser == null) return;
+
+            // 1. Șterge imaginea (avatarul) utilizatorului de pe disk
+            if (!string.IsNullOrWhiteSpace(SelectedUser.ImagePath))
             {
-                Users.Remove(SelectedUser);
-                SelectedUser = null;
-                _userRepository.SaveUsers(Users.ToList());
+                string fullPath = System.IO.Path.Combine(
+                    AppDomain.CurrentDomain.BaseDirectory,
+                    SelectedUser.ImagePath);
+
+                if (System.IO.File.Exists(fullPath))
+                {
+                    try
+                    {
+                        System.IO.File.Delete(fullPath);
+                    }
+                    catch
+                    {
+                        // ignorăm erorile de ștergere a fișierului
+                    }
+                }
             }
+
+            // 2. Șterge toate jocurile salvate ale utilizatorului
+            var savedGameRepo = new SavedGameRepository();
+            savedGameRepo.DeleteAllForUser(SelectedUser.Username);
+
+            // 3. Șterge toate statisticile utilizatorului
+            var statsRepo = new StatisticsRepository();
+            statsRepo.DeleteAllForUser(SelectedUser.Username);
+
+            // 4. Șterge utilizatorul din listă și salvează
+            Users.Remove(SelectedUser);
+            SelectedUser = null;
+            _userRepository.SaveUsers(Users.ToList());
         }
 
         private void Play()

@@ -2,8 +2,13 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Open Game" Height="400" Width="500"
-        WindowStartupLocation="CenterOwner"
+        WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize">
+
+    <Window.Background>
+        <ImageBrush ImageSource="pack://application:,,,/Resources/Backgrounds/all_categories.jpg" 
+                Stretch="UniformToFill"/>
+    </Window.Background>
 
     <Grid Margin="15">
         <Grid.RowDefinitions>
@@ -21,7 +26,8 @@
         <ListBox Grid.Row="1"
                  ItemsSource="{Binding SavedGames}"
                  SelectedItem="{Binding SelectedGame, Mode=TwoWay}"
-                 FontSize="13">
+                 FontSize="13"
+                 Background="#AAE8F0F5">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal" Margin="5">

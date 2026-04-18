@@ -26,7 +26,7 @@
             <MenuItem Header="New Game" Click="NewGame_Click"/>
             <MenuItem Header="Open Game" Command="{Binding OpenGameCommand}"/>
             <MenuItem Header="Save Game" Command="{Binding SaveGameCommand}"/>
-            <MenuItem Header="Statistics"/>
+            <MenuItem Header="Statistics" Command="{Binding StatisticsCommand}"/>
             <Separator/>
             <MenuItem Header="Cancel" Click="Cancel_Click"/>
         </MenuItem>
