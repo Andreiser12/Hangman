@@ -45,9 +45,9 @@ namespace HangmanGame.ViewModels
 
             _avatars = new List<string>
             {
-                "pack://application:,,,/Resources/Avatars/avatar1.drawio.png",
-                "pack://application:,,,/Resources/Avatars/avatar2.drawio.png",
-                "pack://application:,,,/Resources/Avatars/avatar3.drawio.png"
+                "pack://application:,,,/HangmanGame;component/Resources/Avatars/avatar1.drawio.png",
+                "pack://application:,,,/HangmanGame;component/Resources/Avatars/avatar2.drawio.png",
+                "pack://application:,,,/HangmanGame;component/Resources/Avatars/avatar3.drawio.png"
             };
 
             BrowseImageCommand = new RelayCommand(_ => BrowseImage());
@@ -81,7 +81,6 @@ namespace HangmanGame.ViewModels
 
                 if (uri.StartsWith("file:///"))
                 {
-                    // E deja un fișier pe disk (cel din Browse) — doar setăm path-ul relativ
                     string absolutePath = new Uri(uri).LocalPath;
                     string relativePath = System.IO.Path.GetRelativePath(
                         AppDomain.CurrentDomain.BaseDirectory, absolutePath);
@@ -89,8 +88,7 @@ namespace HangmanGame.ViewModels
                 }
                 else
                 {
-                    // E o resursă împachetată — o copiem pe disk
-                    string fileName = $"avatar_{DateTime.Now.Ticks}.jpg";
+                    string fileName = $"avatar_{DateTime.Now.Ticks}.png";
                     string imagesDir = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "Images");
                     if (!System.IO.Directory.Exists(imagesDir))
                         System.IO.Directory.CreateDirectory(imagesDir);
@@ -133,12 +131,10 @@ namespace HangmanGame.ViewModels
                 string relativePath = System.IO.Path.Combine("Data", "Images", fileName);
                 ImagePath = relativePath;
 
-                // Adăugăm imaginea în lista de avatare (sau o înlocuim dacă există deja una "browsed")
                 string fullUri = "file:///" + System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath).Replace("\\", "/");
 
                 if (_browsedAvatarIndex >= 0)
                 {
-                    // Există deja un avatar "browsed" — îl înlocuim
                     _avatars[_browsedAvatarIndex] = fullUri;
                 }
                 else

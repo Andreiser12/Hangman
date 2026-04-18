@@ -29,7 +29,6 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Rând 0: Username -->
         <StackPanel Grid.Row="0">
             <TextBlock Text="Username:" Margin="0,0,0,5"/>
             <TextBox Text="{Binding Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
@@ -40,7 +39,6 @@
                      FontSize="14"/>
         </StackPanel>
 
-        <!-- Rând 1: Image Browse -->
         <StackPanel Grid.Row="1" Visibility="{Binding ShowImageSection, Converter={StaticResource BoolToVis}}">
             <TextBlock Text="Image:" Margin="0,0,0,5"/>
             <Button Content="Browse an image..." 
@@ -50,7 +48,6 @@
                     Margin="0,0,0,15"/>
         </StackPanel>
 
-        <!-- Rând 2: Avatar picker -->
         <StackPanel Grid.Row="2" Visibility="{Binding ShowImageSection, Converter={StaticResource BoolToVis}}">
             <TextBlock Text="OR" 
                    HorizontalAlignment="Center" 
@@ -86,7 +83,6 @@
             </Grid>
         </StackPanel>
 
-        <!-- Rând 3: OK/Cancel -->
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
             <Button Content="OK" Width="75" Margin="0,0,10,0" 
                 Click="OkButton_Click" IsDefault="True"/>
