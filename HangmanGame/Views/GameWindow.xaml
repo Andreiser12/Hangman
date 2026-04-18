@@ -24,8 +24,8 @@
     <Menu DockPanel.Dock="Top">
         <MenuItem Header="File">
             <MenuItem Header="New Game" Click="NewGame_Click"/>
-            <MenuItem Header="Open Game"/>
-            <MenuItem Header="Save Game"/>
+            <MenuItem Header="Open Game" Command="{Binding OpenGameCommand}"/>
+            <MenuItem Header="Save Game" Command="{Binding SaveGameCommand}"/>
             <MenuItem Header="Statistics"/>
             <Separator/>
             <MenuItem Header="Cancel" Click="Cancel_Click"/>

@@ -14,6 +14,7 @@ namespace HangmanGame.ViewModels
         private Game _currentGame;
         private User _currentUser;
         private List<string> _usedWords = new List<string>();
+        private readonly SavedGameRepository _savedGameRepository;
 
         public string Username => _currentUser.Username;
         public string UserImagePath => _currentUser.ImagePath;
@@ -110,6 +111,8 @@ namespace HangmanGame.ViewModels
         
         public ObservableCollection<LetterButton> Letters { get; set; }          
         public ICommand GuessLetterCommand { get; }
+        public ICommand SaveGameCommand { get; }
+        public ICommand OpenGameCommand { get; }
 
         private DispatcherTimer _timer;
 
@@ -120,6 +123,7 @@ namespace HangmanGame.ViewModels
             _currentGame = new Game();
             _displayWord = string.Empty;
             _selectedCategory = "All categories";
+            _savedGameRepository = new SavedGameRepository();
 
             var categoryList = _wordRepository.GetCategories();
             categoryList.Insert(0, "All categories");
@@ -129,8 +133,96 @@ namespace HangmanGame.ViewModels
             GuessLetterCommand = new RelayCommand(
                 execute: param => GuessLetter((char)param)
             );
+            
+            SaveGameCommand = new RelayCommand(
+                execute: _ => SaveGame()
+            );
+
+            OpenGameCommand = new RelayCommand(
+                execute: _ => OpenGame()
+            );
 
             NewGame();
+        }
+
+        private void OpenGame()
+        {
+            _timer?.Stop();
+
+            var dialog = new Views.OpenGameWindow();
+            dialog.DataContext = new OpenGameViewModel(_currentUser.Username);
+            bool? result = dialog.ShowDialog();
+
+            if (result == true && dialog.SelectedGame != null)
+            {
+                var saved = dialog.SelectedGame;
+
+                _currentGame = new Game();
+                _currentGame.Category = saved.Category;
+                _currentGame.WordToGuess = saved.WordToGuess;
+                _currentGame.GuessedLetters = new List<char>(saved.GuessedLetters);
+                _currentGame.WrongLetters = new List<char>(saved.WrongLetters);
+                _currentGame.CurrentLevel = saved.CurrentLevel;
+
+                _usedWords = new List<string>(saved.UsedWords);
+
+                // Actualizează proprietățile legate de UI
+                _selectedCategory = saved.Category;
+                OnPropertyChanged(nameof(SelectedCategory));
+
+                CurrentLevel = saved.CurrentLevel;
+                RemainingSeconds = saved.RemainingSeconds;
+
+                // Reconstruiește butoanele de litere cu stările corecte
+                InitializeLetters();
+                foreach (char letter in saved.GuessedLetters.Concat(saved.WrongLetters))
+                {
+                    var btn = Letters.FirstOrDefault(l => l.Letter == letter);
+                    if (btn != null) btn.IsEnabled = false;
+                }
+
+                UpdateDisplayWord();
+                UpdateHangmanImage();
+                StartTimer();
+            }
+            else
+            {
+                StartTimer();
+            }
+        }
+
+        private void SaveGame()
+        {
+            _timer?.Stop();
+
+            var dialog = new Views.SaveGameWindow();
+            bool? result = dialog.ShowDialog();
+
+            if (result == true)
+            {
+                var savedGame = new SavedGame
+                {
+                    GameName = dialog.GameName,
+                    Username = _currentUser.Username,
+                    Category = _currentGame.Category,
+                    WordToGuess = _currentGame.WordToGuess,
+                    GuessedLetters = new List<char>(_currentGame.GuessedLetters),
+                    WrongLetters = new List<char>(_currentGame.WrongLetters),
+                    CurrentLevel = _currentGame.CurrentLevel,
+                    RemainingSeconds = RemainingSeconds,
+                    UsedWords = new List<string>(_usedWords)
+                };
+
+                _savedGameRepository.Save(savedGame);
+
+                System.Windows.MessageBox.Show(
+                    $"Game '{dialog.GameName}' saved successfully!",
+                    "Save Game",
+                    System.Windows.MessageBoxButton.OK,
+                    System.Windows.MessageBoxImage.Information);
+            }
+
+            StartTimer();
         }
 
         private void InitializeLetters()
@@ -146,8 +238,8 @@ namespace HangmanGame.ViewModels
         {
             _currentGame = new Game();
             _currentGame.Category = SelectedCategory;
-            _currentGame.WordToGuess = _wordRepository.GetRandomWord(SelectedCategory).ToUpper();
             _usedWords.Clear();
+            _currentGame.WordToGuess = GetUniqueWord();
 
             RemainingSeconds = 12;
             CurrentLevel = _currentGame.CurrentLevel;
