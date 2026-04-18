@@ -62,5 +62,25 @@ namespace HangmanGame.Views
             clicked.IsChecked = true;
             vm.SelectedCategory = clicked.Tag.ToString();
         }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            var vm = DataContext as ViewModels.GameViewModel;
+            if (vm == null) return;
+
+            char letter = '\0';
+
+            if (e.Key >= Key.A && e.Key <= Key.Z)
+            {
+                letter = (char)('A' + (e.Key - Key.A));
+            }
+
+            if (letter != '\0' && vm.GuessLetterCommand.CanExecute(letter))
+            {
+                vm.GuessLetterCommand.Execute(letter);
+            }
+        }
+
+
     }
 }

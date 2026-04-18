@@ -10,6 +10,22 @@
 
   <ItemGroup>
     <None Remove="Data\words.json" />
+    <None Remove="Resources\Avatars\avatar1.drawio.png" />
+    <None Remove="Resources\Avatars\avatar2.drawio.png" />
+    <None Remove="Resources\Avatars\avatar3.drawio.png" />
+    <None Remove="Resources\Backgrounds\all_categories.jpg" />
+    <None Remove="Resources\Backgrounds\background_masini.jpg" />
+    <None Remove="Resources\Backgrounds\cars.jpg" />
+    <None Remove="Resources\HangmanDisplayed\try0.drawio.png" />
+    <None Remove="Resources\HangmanDisplayed\try1.drawio.png" />
+    <None Remove="Resources\HangmanDisplayed\try2.drawio.png" />
+    <None Remove="Resources\HangmanDisplayed\try3.drawio.png" />
+    <None Remove="Resources\HangmanDisplayed\try4.drawio.png" />
+    <None Remove="Resources\HangmanDisplayed\try5.drawio.png" />
+    <None Remove="Resources\HangmanDisplayed\try6.drawio.png" />
+    <None Remove="Resources\HangmanDisplayed\try7.drawio.png" />
+    <None Remove="Resources\HangmanDisplayed\try8.drawio.png" />
+    <None Remove="Resources\HangmanDisplayed\try9.drawio.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,7 +35,63 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Resources\" />
+    <Resource Include="Resources\Avatars\avatar1.drawio.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Avatars\avatar2.drawio.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Avatars\avatar3.drawio.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Backgrounds\all_categories.jpg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Backgrounds\cars.jpg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Backgrounds\football_teams.jpg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Backgrounds\cities.jpg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Backgrounds\football_players.jpg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Backgrounds\countries.jpg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\HangmanDisplayed\try0.drawio.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\HangmanDisplayed\try1.drawio.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\HangmanDisplayed\try2.drawio.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\HangmanDisplayed\try3.drawio.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\HangmanDisplayed\try4.drawio.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\HangmanDisplayed\try5.drawio.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\HangmanDisplayed\try6.drawio.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\HangmanDisplayed\try7.drawio.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\HangmanDisplayed\try8.drawio.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\HangmanDisplayed\try9.drawio.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
 </Project>

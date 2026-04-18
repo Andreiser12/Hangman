@@ -6,7 +6,8 @@
         xmlns:vm="clr-namespace:HangmanGame.ViewModels"
         xmlns:conv="clr-namespace:HangmanGame.Converters"
         mc:Ignorable="d"
-        Title="Sign In" Height="500" Width="400">
+        Title="Sign In" Height="500" Width="400"
+        WindowStartupLocation="CenterScreen">
     
     <Window.DataContext>
         <vm:SignInViewModel/>
@@ -15,6 +16,11 @@
     <Window.Resources>
         <conv:RelativePathToImageConverter x:Key="ImageConverter"/>
     </Window.Resources>
+
+    <Window.Background>
+        <ImageBrush ImageSource="pack://application:,,,/Resources/Backgrounds/all_categories.jpg" 
+                    Stretch="UniformToFill"/>
+    </Window.Background>
 
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -34,10 +40,13 @@
         <ListBox Grid.Row="1"
                  ItemsSource="{Binding Users}"
                  SelectedItem="{Binding SelectedUser, Mode=TwoWay}"
-                 Margin="0,0,0,10">
+                 Margin="0,0,0,10"
+                 Background="Transparent">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding Username}"/>
+                    <TextBlock Text="{Binding Username}"
+                               Foreground="Black"
+                               FontSize="18"/>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
@@ -51,6 +60,7 @@
 
             <Button Grid.Column="0"
                     Content="&lt;&lt;"
+                    Command="{Binding PreviousUserCommand}"
                     Width="40"
                     VerticalAlignment="Center"/>
 
@@ -61,6 +71,7 @@
 
             <Button Grid.Column="2"
                     Content="&gt;&gt;"
+                    Command="{Binding NextUserCommand}"
                     Width="40"
                     VerticalAlignment="Center"/>
         </Grid>

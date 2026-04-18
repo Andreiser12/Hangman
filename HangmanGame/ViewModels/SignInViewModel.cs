@@ -7,7 +7,7 @@ using System.Windows.Input;
 
 namespace HangmanGame.ViewModels
 {
-    public class SignInViewModel: ViewModelBase
+    public class SignInViewModel : ViewModelBase
     {
         public ObservableCollection<User> Users { get; set; }
 
@@ -31,6 +31,8 @@ namespace HangmanGame.ViewModels
         public ICommand NewUserCommand { get; }
         public ICommand DeleteUserCommand { get; }
         public ICommand CancelCommand { get; }
+        public ICommand PreviousUserCommand { get; }
+        public ICommand NextUserCommand { get; }
 
         public SignInViewModel()
         {
@@ -54,6 +56,37 @@ namespace HangmanGame.ViewModels
             CancelCommand = new RelayCommand(
                 execute: _ => Cancel()
             );
+
+            PreviousUserCommand = new RelayCommand(
+                execute: _ => PreviousUser(),
+                canExecute: _ => Users.Count > 0
+            );
+            NextUserCommand = new RelayCommand(
+                execute: _ => NextUser(),
+                canExecute: _ => Users.Count > 0
+            );
+        }
+
+        private void PreviousUser()
+        {
+            if (Users.Count == 0) return;
+
+            int currentIndex = SelectedUser != null ? Users.IndexOf(SelectedUser) : 0;
+            currentIndex--;
+            if (currentIndex < 0) currentIndex = Users.Count - 1;
+
+            SelectedUser = Users[currentIndex];
+        }
+
+        private void NextUser()
+        {
+            if (Users.Count == 0) return;
+
+            int currentIndex = SelectedUser != null ? Users.IndexOf(SelectedUser) : -1;
+            currentIndex++;
+            if (currentIndex >= Users.Count) currentIndex = 0;
+
+            SelectedUser = Users[currentIndex];
         }
 
         private void Cancel()
@@ -65,11 +98,11 @@ namespace HangmanGame.ViewModels
         {
             var dialog = new Views.NewUserWindow();
 
-            if (dialog.ShowDialog()==true)
+            if (dialog.ShowDialog() == true)
             {
                 var vm = dialog.DataContext as NewUserViewModel;
 
-                if(!string.IsNullOrWhiteSpace(vm.Username))
+                if (!string.IsNullOrWhiteSpace(vm.Username))
                 {
                     var newUser = new User
                     {

@@ -2,7 +2,9 @@
 using HangmanGame.Data;
 using HangmanGame.Models;
 using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace HangmanGame.ViewModels
 {
@@ -11,6 +13,7 @@ namespace HangmanGame.ViewModels
         private readonly WordRepository _wordRepository;
         private Game _currentGame;
         private User _currentUser;
+        private List<string> _usedWords = new List<string>();
 
         public string Username => _currentUser.Username;
         public string UserImagePath => _currentUser.ImagePath;
@@ -75,12 +78,40 @@ namespace HangmanGame.ViewModels
             }
         }
 
+        private string _hangmanImagePath;
+        public string HangmanImagePath
+        {
+            get => _hangmanImagePath;
+            set
+            {
+                if (_hangmanImagePath != value)
+                {
+                    _hangmanImagePath = value;
+                    OnPropertyChanged(nameof(HangmanImagePath));
+                }
+            }
+        }
+
+        private string _displayWordColor = "White";
+        public string DisplayWordColor
+        {
+            get => _displayWordColor;
+            set
+            {
+                if (_displayWordColor != value)
+                {
+                    _displayWordColor = value;
+                    OnPropertyChanged(nameof(DisplayWordColor));
+                }
+            }
+        }
+
         public ObservableCollection<string> Categories { get; set; }
         
         public ObservableCollection<LetterButton> Letters { get; set; }          
         public ICommand GuessLetterCommand { get; }
 
-        private System.Windows.Threading.DispatcherTimer _timer;
+        private DispatcherTimer _timer;
 
         public GameViewModel(User user)
         {
@@ -116,13 +147,15 @@ namespace HangmanGame.ViewModels
             _currentGame = new Game();
             _currentGame.Category = SelectedCategory;
             _currentGame.WordToGuess = _wordRepository.GetRandomWord(SelectedCategory).ToUpper();
+            _usedWords.Clear();
 
-            RemainingSeconds = 30;
+            RemainingSeconds = 12;
             CurrentLevel = _currentGame.CurrentLevel;
 
             InitializeLetters();
             UpdateDisplayWord();
             StartTimer();
+            UpdateHangmanImage();
         }
 
         private void UpdateDisplayWord()
@@ -134,12 +167,15 @@ namespace HangmanGame.ViewModels
         private void GuessLetter(char letter)
         {
             var button = Letters.FirstOrDefault(l => l.Letter == letter);
-            if (button != null)
-                button.IsEnabled = false;
+            if (button == null || !button.IsEnabled)
+                return;
+
+            button.IsEnabled = false;
 
             if (_currentGame.WordToGuess.Contains(letter))
             {
                 _currentGame.GuessedLetters.Add(letter);
+                RemainingSeconds = 12;
                 UpdateDisplayWord();
 
                 bool wordComplete = _currentGame.WordToGuess
@@ -153,29 +189,75 @@ namespace HangmanGame.ViewModels
                     if (_currentGame.CurrentLevel >= 3)
                     {
                         _timer?.Stop();
+                        DisplayWordColor = "LimeGreen";
+
+                        var winTimer = new DispatcherTimer();
+                        winTimer.Interval = TimeSpan.FromSeconds(2);
+                        winTimer.Tick += (s, ev) =>
+                        {
+                            winTimer.Stop();
+                            ShowGameOver(GameResult.Won);
+                        };
+                        winTimer.Start();
                     }
                     else
                     {
-                        _currentGame.WordToGuess = _wordRepository.GetRandomWord(SelectedCategory).ToUpper();
-                        _currentGame.GuessedLetters.Clear();
-                        _currentGame.WrongLetters.Clear();
-                        RemainingSeconds = 30;
-                        InitializeLetters();
-                        UpdateDisplayWord();
+                        _timer?.Stop();
+                        DisplayWordColor = "LimeGreen";
+
+                        var delayTimer = new DispatcherTimer();
+                        delayTimer.Interval = TimeSpan.FromSeconds(2);
+                        delayTimer.Tick += (s, ev) =>
+                        {
+                            delayTimer.Stop();
+                            DisplayWordColor = "White";
+
+                            _currentGame.WordToGuess = GetUniqueWord();
+                            _currentGame.GuessedLetters.Clear();
+                            _currentGame.WrongLetters.Clear();
+                            RemainingSeconds = 12;
+                            InitializeLetters();
+                            UpdateDisplayWord();
+                            UpdateHangmanImage();
+                            StartTimer();
+                        };
+                        delayTimer.Start();
                     }
                 }
             }
             else
             {
                 _currentGame.WrongLetters.Add(letter);
+                UpdateHangmanImage();
+
+                if (_currentGame.WrongLetters.Count >= 9)
+                {
+                    ShowGameOver(GameResult.LostTooManyTries);
+                }
             }
+        }
+
+        private string GetUniqueWord()
+        {
+            string word;
+            int attempts = 0;
+
+            do
+            {
+                word = _wordRepository.GetRandomWord(SelectedCategory).ToUpper();
+                attempts++;
+                if (attempts > 100) break;
+            } while (_usedWords.Contains(word));
+
+            _usedWords.Add(word);
+            return word;
         }
 
         private void StartTimer()
         {
             _timer?.Stop();
 
-            _timer = new System.Windows.Threading.DispatcherTimer();
+            _timer = new DispatcherTimer();
             _timer.Interval = TimeSpan.FromSeconds(1);
             _timer.Tick += (sender, e) =>
             {
@@ -193,14 +275,48 @@ namespace HangmanGame.ViewModels
         private void LoseRound()
         {
             _timer?.Stop();
-            System.Windows.MessageBox.Show(
-                $"Time's up! The word was: {_currentGame.WordToGuess}",
-                "Round Lost");
+            ShowGameOver(GameResult.LostTimeUp);
+        }
 
-            _currentGame.CurrentLevel = 0;
-            CurrentLevel = 0;
+        private void UpdateHangmanImage()
+        {
+            int wrongCount = _currentGame.WrongLetters.Count;
+            if (wrongCount > 9) wrongCount = 9;
 
-            NewGame();
+            HangmanImagePath = $"pack://application:,,,/Resources/HangmanDisplayed/try{wrongCount}.drawio.png";
+        }
+
+        private void ShowGameOver(GameResult result)
+        {
+            _timer?.Stop();
+
+            string word = _currentGame.WordToGuess;
+            var vm = new GameOverViewModel(result, word);
+            var window = new Views.GameOverWindow();
+            window.DataContext = vm;
+            window.ShowDialog();
+
+            if (vm.PlayAgainClicked)
+            {
+                _currentGame.CurrentLevel = 0;
+                CurrentLevel = 0;
+                NewGame();
+            }
+            else
+            {
+                var signInWindow = new Views.SignInWindow();
+                System.Windows.Application.Current.MainWindow = signInWindow;
+                signInWindow.Show();
+
+                foreach (System.Windows.Window w in System.Windows.Application.Current.Windows)
+                {
+                    if (w is Views.GameWindow)
+                    {
+                        w.Close();
+                        break;
+                    }
+                }
+            }
         }
     }
 }

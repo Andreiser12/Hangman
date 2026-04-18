@@ -15,6 +15,7 @@ namespace HangmanGame.ViewModels
                 {
                     _username = value;
                     OnPropertyChanged(nameof(Username));
+                    OnPropertyChanged(nameof(ShowImageSection));
                 }
             }
         }
@@ -33,20 +34,88 @@ namespace HangmanGame.ViewModels
             }
         }
 
+        private int _browsedAvatarIndex = -1;
+
         public ICommand BrowseImageCommand { get; }
 
         public NewUserViewModel()
         {
-            BrowseImageCommand = new RelayCommand(
-                execute: _ => BrowseImage()
-            );
+            _username = string.Empty;
+            _imagePath = string.Empty;
+
+            _avatars = new List<string>
+            {
+                "pack://application:,,,/Resources/Avatars/avatar1.drawio.png",
+                "pack://application:,,,/Resources/Avatars/avatar2.drawio.png",
+                "pack://application:,,,/Resources/Avatars/avatar3.drawio.png"
+            };
+
+            BrowseImageCommand = new RelayCommand(_ => BrowseImage());
+            PreviousAvatarCommand = new RelayCommand(_ => PreviousAvatar());
+            NextAvatarCommand = new RelayCommand(_ => NextAvatar());
+
+            NextAvatar();
+        }
+
+        private void NextAvatar()
+        {
+            if (_avatars.Count == 0) return;
+            _currentAvatarIndex++;
+            if (_currentAvatarIndex >= _avatars.Count) _currentAvatarIndex = 0;
+            SelectAvatar();
+        }
+
+        private void PreviousAvatar()
+        {
+            if (_avatars.Count == 0) return;
+            _currentAvatarIndex--;
+            if (_currentAvatarIndex < 0) _currentAvatarIndex = _avatars.Count - 1;
+            SelectAvatar();
+        }
+
+        private void SelectAvatar()
+        {
+            try
+            {
+                string uri = _avatars[_currentAvatarIndex];
+
+                if (uri.StartsWith("file:///"))
+                {
+                    // E deja un fișier pe disk (cel din Browse) — doar setăm path-ul relativ
+                    string absolutePath = new Uri(uri).LocalPath;
+                    string relativePath = System.IO.Path.GetRelativePath(
+                        AppDomain.CurrentDomain.BaseDirectory, absolutePath);
+                    ImagePath = relativePath;
+                }
+                else
+                {
+                    // E o resursă împachetată — o copiem pe disk
+                    string fileName = $"avatar_{DateTime.Now.Ticks}.jpg";
+                    string imagesDir = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "Images");
+                    if (!System.IO.Directory.Exists(imagesDir))
+                        System.IO.Directory.CreateDirectory(imagesDir);
+
+                    string destFile = System.IO.Path.Combine(imagesDir, fileName);
+
+                    var resourceInfo = System.Windows.Application.GetResourceStream(new Uri(uri, UriKind.Absolute));
+                    using (var fileStream = System.IO.File.Create(destFile))
+                    {
+                        resourceInfo.Stream.CopyTo(fileStream);
+                    }
+
+                    ImagePath = System.IO.Path.Combine("Data", "Images", fileName);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show(ex.ToString(), "Error");
+            }
         }
 
         private void BrowseImage()
         {
             var dialog = new Microsoft.Win32.OpenFileDialog();
             dialog.Filter = "Image Files (*.jpg;*.gif)|*.jpg;*.gif";
-
             if (dialog.ShowDialog() == true)
             {
                 string sourceFile = dialog.FileName;
@@ -54,18 +123,39 @@ namespace HangmanGame.ViewModels
                 string imagesDir = System.IO.Path.Combine(
                     AppDomain.CurrentDomain.BaseDirectory,
                     "Data", "Images");
-
-                if(!System.IO.Directory.Exists(imagesDir))
+                if (!System.IO.Directory.Exists(imagesDir))
                 {
                     System.IO.Directory.CreateDirectory(imagesDir);
                 }
-
-                string destFile = System.IO.Path.Combine(
-                    imagesDir, fileName);
+                string destFile = System.IO.Path.Combine(imagesDir, fileName);
                 System.IO.File.Copy(sourceFile, destFile, overwrite: true);
 
-                ImagePath = System.IO.Path.Combine("Data", "Images", fileName);
+                string relativePath = System.IO.Path.Combine("Data", "Images", fileName);
+                ImagePath = relativePath;
+
+                // Adăugăm imaginea în lista de avatare (sau o înlocuim dacă există deja una "browsed")
+                string fullUri = "file:///" + System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath).Replace("\\", "/");
+
+                if (_browsedAvatarIndex >= 0)
+                {
+                    // Există deja un avatar "browsed" — îl înlocuim
+                    _avatars[_browsedAvatarIndex] = fullUri;
+                }
+                else
+                {
+                    _avatars.Add(fullUri);
+                    _browsedAvatarIndex = _avatars.Count - 1;
+                }
+
+                _currentAvatarIndex = _browsedAvatarIndex;
             }
         }
+
+        private List<string> _avatars;
+        private int _currentAvatarIndex = -1;
+        public ICommand PreviousAvatarCommand { get; }
+        public ICommand NextAvatarCommand { get; }
+
+        public bool ShowImageSection => !string.IsNullOrWhiteSpace(Username);
     }
 }
