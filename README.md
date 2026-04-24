@@ -29,8 +29,9 @@ After completing your username, you can choose your avatar.
 
 ## Gameplay
 
-
-
+<div align="center">
+  <img src="HangmanGame/Media/hangmanGif.gif" alt="Gameplay GIF" width="600"/>
+</div>
 
 ## Open Game
 
@@ -45,6 +46,7 @@ After completing your username, you can choose your avatar.
 </div>
 
 ## Statistics
+The statistics are available for all users.
 
 <div align="center">
   <img width="441" height="371" alt="Image" src="https://github.com/user-attachments/assets/505c2750-9804-42cd-a98d-8d8e7a85aa66" />
@@ -54,7 +56,7 @@ After completing your username, you can choose your avatar.
 
 <div align="center">
    <img width="366" height="221" alt="Image" src="https://github.com/user-attachments/assets/9d344ebb-e831-4d36-b26a-e69d4e4263f0" />
-<div>
+</div>
 
 ## Prerequisites
 
