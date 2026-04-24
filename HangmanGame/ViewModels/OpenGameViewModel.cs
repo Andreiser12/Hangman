@@ -8,7 +8,7 @@ namespace HangmanGame.ViewModels
 {
     public class OpenGameViewModel : ViewModelBase
     {
-        private readonly SavedGameRepository _savedGameRepository;
+        private readonly SavedGameData _savedGameData;
         private readonly string _currentUsername;
 
         public ObservableCollection<SavedGame> SavedGames { get; set; }
@@ -32,9 +32,9 @@ namespace HangmanGame.ViewModels
         public OpenGameViewModel(string username)
         {
             _currentUsername = username;
-            _savedGameRepository = new SavedGameRepository();
+            _savedGameData = new SavedGameData();
 
-            var userGames = _savedGameRepository.LoadForUser(username);
+            var userGames = _savedGameData.LoadForUser(username);
             SavedGames = new ObservableCollection<SavedGame>(userGames);
 
             DeleteGameCommand = new RelayCommand(
@@ -47,7 +47,7 @@ namespace HangmanGame.ViewModels
         {
             if (SelectedGame == null) return;
 
-            _savedGameRepository.Delete(SelectedGame);
+            _savedGameData.Delete(SelectedGame);
             SavedGames.Remove(SelectedGame);
             SelectedGame = null;
         }

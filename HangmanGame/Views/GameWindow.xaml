@@ -28,7 +28,7 @@
             <MenuItem Header="Save Game" Command="{Binding SaveGameCommand}"/>
             <MenuItem Header="Statistics" Command="{Binding StatisticsCommand}"/>
             <Separator/>
-            <MenuItem Header="Cancel" Click="Cancel_Click"/>
+            <MenuItem Header="Cancel" Command="{Binding CancelCommand}"/>
         </MenuItem>
         <MenuItem Header="Categories" ItemsSource="{Binding Categories}">
             <MenuItem.ItemContainerStyle>

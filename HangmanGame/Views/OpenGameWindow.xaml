@@ -50,7 +50,6 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <!-- Rând cu toate butoanele pe aceeași linie -->
         <Grid Grid.Row="2" Margin="0,15,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>

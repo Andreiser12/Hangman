@@ -7,7 +7,8 @@
         xmlns:conv="clr-namespace:HangmanGame.Converters"
         mc:Ignorable="d"
         Title="Sign In" Height="500" Width="400"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize">
     
     <Window.DataContext>
         <vm:SignInViewModel/>

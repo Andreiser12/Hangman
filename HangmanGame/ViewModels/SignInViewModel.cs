@@ -1,4 +1,4 @@
-﻿using HangmanGame.Commands;
+using HangmanGame.Commands;
 using HangmanGame.Data;
 using HangmanGame.Models;
 using System.Collections.ObjectModel;
@@ -9,35 +9,13 @@ namespace HangmanGame.ViewModels
 {
     public class SignInViewModel : ViewModelBase
     {
-        public ObservableCollection<User> Users { get; set; }
-
-        private User? _selectedUser;
-        public User? SelectedUser
-        {
-            get => _selectedUser;
-            set
-            {
-                if (_selectedUser != value)
-                {
-                    _selectedUser = value;
-                    OnPropertyChanged(nameof(SelectedUser));
-                }
-            }
-        }
-
-        private readonly UserRepository _userRepository;
-
-        public ICommand PlayCommand { get; }
-        public ICommand NewUserCommand { get; }
-        public ICommand DeleteUserCommand { get; }
-        public ICommand CancelCommand { get; }
-        public ICommand PreviousUserCommand { get; }
-        public ICommand NextUserCommand { get; }
+        #region Constructor & Core Dependencies
+        private readonly UserData _userData;
 
         public SignInViewModel()
         {
-            _userRepository = new UserRepository();
-            Users = new ObservableCollection<User>(_userRepository.LoadUsers());
+            _userData = new UserData();
+            Users = new ObservableCollection<User>(_userData.LoadUsers());
 
             PlayCommand = new RelayCommand(
                 execute: _ => Play(),
@@ -66,6 +44,27 @@ namespace HangmanGame.ViewModels
                 canExecute: _ => Users.Count > 0
             );
         }
+        #endregion
+
+        #region User Selection & Navigation
+        public ObservableCollection<User> Users { get; set; }
+
+        private User? _selectedUser;
+        public User? SelectedUser
+        {
+            get => _selectedUser;
+            set
+            {
+                if (_selectedUser != value)
+                {
+                    _selectedUser = value;
+                    OnPropertyChanged(nameof(SelectedUser));
+                }
+            }
+        }
+
+        public ICommand PreviousUserCommand { get; }
+        public ICommand NextUserCommand { get; }
 
         private void PreviousUser()
         {
@@ -88,11 +87,11 @@ namespace HangmanGame.ViewModels
 
             SelectedUser = Users[currentIndex];
         }
+        #endregion
 
-        private void Cancel()
-        {
-            Application.Current.Shutdown();
-        }
+        #region User Management (New / Delete)
+        public ICommand NewUserCommand { get; }
+        public ICommand DeleteUserCommand { get; }
 
         private void NewUser()
         {
@@ -123,7 +122,7 @@ namespace HangmanGame.ViewModels
                         ImagePath = vm.ImagePath
                     };
                     Users.Add(newUser);
-                    _userRepository.SaveUsers(Users.ToList());
+                    _userData.SaveUsers(Users.ToList());
                 }
             }
         }
@@ -132,7 +131,6 @@ namespace HangmanGame.ViewModels
         {
             if (SelectedUser == null) return;
 
-            // 1. Șterge imaginea (avatarul) utilizatorului de pe disk
             if (!string.IsNullOrWhiteSpace(SelectedUser.ImagePath))
             {
                 string fullPath = System.IO.Path.Combine(
@@ -147,24 +145,25 @@ namespace HangmanGame.ViewModels
                     }
                     catch
                     {
-                        // ignorăm erorile de ștergere a fișierului
                     }
                 }
             }
 
-            // 2. Șterge toate jocurile salvate ale utilizatorului
-            var savedGameRepo = new SavedGameRepository();
-            savedGameRepo.DeleteAllForUser(SelectedUser.Username);
+            var savedGameData = new SavedGameData();
+            savedGameData.DeleteAllForUser(SelectedUser.Username);
 
-            // 3. Șterge toate statisticile utilizatorului
-            var statsRepo = new StatisticsRepository();
-            statsRepo.DeleteAllForUser(SelectedUser.Username);
+            var statsData = new StatisticsData();
+            statsData.DeleteAllForUser(SelectedUser.Username);
 
-            // 4. Șterge utilizatorul din listă și salvează
             Users.Remove(SelectedUser);
             SelectedUser = null;
-            _userRepository.SaveUsers(Users.ToList());
+            _userData.SaveUsers(Users.ToList());
         }
+        #endregion
+
+        #region Game Flow Controls
+        public ICommand PlayCommand { get; }
+        public ICommand CancelCommand { get; }
 
         private void Play()
         {
@@ -178,5 +177,11 @@ namespace HangmanGame.ViewModels
             gameWindow.Show();
             previousWindow?.Close();
         }
+
+        private void Cancel()
+        {
+            Application.Current.Shutdown();
+        }
+        #endregion
     }
 }

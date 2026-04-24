@@ -4,11 +4,11 @@ using System.Text.Json;
 
 namespace HangmanGame.Data
 {
-    public class UserRepository
+    public class UserData
     {
         private readonly string _filePath;
 
-        public UserRepository()
+        public UserData()
         {
             _filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "users.json");
         }

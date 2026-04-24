@@ -10,8 +10,8 @@ namespace HangmanGame.ViewModels
 
         public StatisticsViewModel()
         {
-            var repo = new StatisticsRepository();
-            var allStats = repo.LoadAll();
+            var statisticsData = new StatisticsData();
+            var allStats = statisticsData.LoadAll();
             AllStatistics = new ObservableCollection<Statistics>(allStats);
         }
     }

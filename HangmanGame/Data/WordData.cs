@@ -3,12 +3,12 @@ using System.Text.Json;
 
 namespace HangmanGame.Data
 {
-    public class WordRepository
+    public class WordData
     {
         private readonly string _filePath;
         private Dictionary<string, List<string>> _words;
 
-        public WordRepository()
+        public WordData()
         {
             _filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "words.json");
             LoadWords();

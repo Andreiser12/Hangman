@@ -10,16 +10,14 @@ namespace HangmanGame.ViewModels
         LostTimeUp
     }
 
-    public class GameOverViewModel : ViewModelBase
+    public class GameResultViewModel : ViewModelBase
     {
         public string Message { get; set; }
-
         public ICommand PlayAgainCommand { get; }
         public ICommand BackToSignInCommand { get; }
-
         public bool PlayAgainClicked { get; private set; }
 
-        public GameOverViewModel(GameResult result, string word = null)
+        public GameResultViewModel(GameResult result, string word = null)
         {
             Message = result switch
             {

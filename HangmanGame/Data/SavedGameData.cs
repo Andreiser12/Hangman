@@ -7,11 +7,11 @@ using System.Text.Json;
 
 namespace HangmanGame.Data
 {
-    public class SavedGameRepository
+    public class SavedGameData
     {
         private readonly string _filePath;
 
-        public SavedGameRepository()
+        public SavedGameData()
         {
             _filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "saved_games.json");
         }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,11 +30,6 @@ namespace HangmanGame.Views
             vm?.NewGame();
         }
 
-        private void Cancel_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
-
         private void About_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("Nume: Șerbănescu Andrei\nGrupa: 10LF244\nSpecializarea: Informatică",
@@ -49,13 +44,16 @@ namespace HangmanGame.Views
             var vm = DataContext as ViewModels.GameViewModel;
             if (vm == null) return;
 
-            var parent = clicked.Parent as MenuItem;
+            var parent = ItemsControl.ItemsControlFromItemContainer(clicked) as MenuItem;
             if (parent != null)
             {
                 foreach (var item in parent.Items)
                 {
-                    if (item is MenuItem menuItem && menuItem != clicked)
+                    var menuItem = parent.ItemContainerGenerator.ContainerFromItem(item) as MenuItem;
+                    if (menuItem != null && menuItem != clicked)
+                    {
                         menuItem.IsChecked = false;
+                    }
                 }
             }
 

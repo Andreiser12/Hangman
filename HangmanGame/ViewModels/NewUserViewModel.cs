@@ -1,43 +1,11 @@
-﻿using HangmanGame.Commands;
+using HangmanGame.Commands;
 using System.Windows.Input;
 
 namespace HangmanGame.ViewModels
 {
     public class NewUserViewModel: ViewModelBase
     {
-        private string _username = string.Empty;
-        public string Username
-        {
-            get => _username;
-            set
-            {
-                if (_username != value)
-                {
-                    _username = value;
-                    OnPropertyChanged(nameof(Username));
-                    OnPropertyChanged(nameof(ShowImageSection));
-                }
-            }
-        }
-
-        private string _imagePath = string.Empty;
-        public string ImagePath
-        {
-            get => _imagePath;
-            set
-            {
-                if (_imagePath != value)
-                {
-                    _imagePath = value;
-                    OnPropertyChanged(nameof(ImagePath));
-                }
-            }
-        }
-
-        private int _browsedAvatarIndex = -1;
-
-        public ICommand BrowseImageCommand { get; }
-
+        #region Constructor
         public NewUserViewModel()
         {
             _username = string.Empty;
@@ -56,6 +24,49 @@ namespace HangmanGame.ViewModels
 
             NextAvatar();
         }
+        #endregion
+
+        #region Username
+        private string _username = string.Empty;
+        public string Username
+        {
+            get => _username;
+            set
+            {
+                if (_username != value)
+                {
+                    _username = value;
+                    OnPropertyChanged(nameof(Username));
+                    OnPropertyChanged(nameof(ShowImageSection));
+                }
+            }
+        }
+        public bool ShowImageSection => !string.IsNullOrWhiteSpace(Username);
+        #endregion
+
+        #region Validation / Image Path
+        private string _imagePath = string.Empty;
+        public string ImagePath
+        {
+            get => _imagePath;
+            set
+            {
+                if (_imagePath != value)
+                {
+                    _imagePath = value;
+                    OnPropertyChanged(nameof(ImagePath));
+                }
+            }
+        }
+        #endregion
+
+        #region Avatar Selection Logic
+        private int _browsedAvatarIndex = -1;
+        private List<string> _avatars;
+        private int _currentAvatarIndex = -1;
+
+        public ICommand PreviousAvatarCommand { get; }
+        public ICommand NextAvatarCommand { get; }
 
         private void NextAvatar()
         {
@@ -109,6 +120,10 @@ namespace HangmanGame.ViewModels
                 System.Windows.MessageBox.Show(ex.ToString(), "Error");
             }
         }
+        #endregion
+
+        #region Browse Image Logic
+        public ICommand BrowseImageCommand { get; }
 
         private void BrowseImage()
         {
@@ -146,12 +161,6 @@ namespace HangmanGame.ViewModels
                 _currentAvatarIndex = _browsedAvatarIndex;
             }
         }
-
-        private List<string> _avatars;
-        private int _currentAvatarIndex = -1;
-        public ICommand PreviousAvatarCommand { get; }
-        public ICommand NextAvatarCommand { get; }
-
-        public bool ShowImageSection => !string.IsNullOrWhiteSpace(Username);
+        #endregion
     }
 }
