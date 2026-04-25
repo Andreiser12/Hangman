@@ -1,6 +1,11 @@
 # Hangman Game
+![C#](https://img.shields.io/badge/c%23-%23239120.svg?style=for-the-badge&logo=csharp&logoColor=white)
+![.Net](https://img.shields.io/badge/.NET-5C2D91?style=for-the-badge&logo=.net&logoColor=white)
+![Drawio](https://img.shields.io/badge/drawio-%23F08705?style=for-the-badge&logo=diagrams.net&logoColor=white)
 
-Recreated the classic Hangman game as a C# WPF application on the .NET framework in Visual Studio, using the **MVVM (Model-View-ViewModel)** architecture. 
+## Overview
+
+Recreated the classic Hangman game as a C# WPF application on the .NET framework in Visual Studio, using the **MVVM** (Model-View-ViewModel) architecture. 
 
 The main goal of the game is to guess 3 words in  a row to win a match. But, if a player uses 9 incorrect letter guesses for a single word, the game is considered lost.
 
